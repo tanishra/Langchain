@@ -12,3 +12,16 @@ chat_model = ChatOpenAI(model='gpt-4.1-mini')
 response = chat_model.invoke("Who is the prime minister of India?")  
 
 print(response.content)  
+
+
+chat_model = ChatOpenAI(model='gpt-4.1-mini', streaming=True)  
+
+# Function to handle streaming response
+def stream_response(prompt):
+    response = chat_model.invoke(prompt)
+    
+    # Iterating over the streamed responses
+    for chunk in response:
+        print(chunk['text'], end='')
+
+stream_response("Write 10 lines on India")
