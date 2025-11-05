@@ -1,28 +1,19 @@
 # LangChain
+**LangChain** is a framework designed to simplify the development of applications powered by **language models** (like OpenAI’s GPT, Anthropic’s Claude, or open-source models like LLaMA and Falcon).  
+It provides modular components to help developers connect **LLMs, prompts, tools, memory, agents, retrievers, and more** into structured, production-ready pipelines.
 
 ## 📚 Table of Contents
 
-- [About LangChain](#about-langchain)
 - [Goals of This Repository](#goals-of-this-repository)
 - [Current Progress](#current-progress)
-  - [1️⃣ Models Component](#1️⃣-models-component)
-    - [Language Models](#language-models)
-    - [Embedding Models](#embedding-models)
+  - [Models Component](#-models-component)
+    - [Language Models](#-language-models)
+    - [Embedding Models](#-embedding-models)
   - [🧩 Semantic Search Example](#-semantic-search-example)
-- [Upcoming Topics](#upcoming-topics)
-- [Repository Structure](#repository-structure)
-- [Installation & Setup](#installation--setup)
-- [How to Use](#how-to-use)
-- [Technologies Used](#technologies-used)
-- [Learning Resources](#learning-resources)
-- [Disclaimer](#disclaimer)
-
----
-
-## 🧠 About LangChain
-
-**LangChain** is a framework designed to simplify the development of applications powered by **language models** (like OpenAI’s GPT, Anthropic’s Claude, or open-source models like LLaMA and Falcon).  
-It provides modular components to help developers connect **LLMs, prompts, tools, memory, agents, retrievers, and more** into structured, production-ready pipelines.
+- [Upcoming Topics](#-upcoming-topics)
+- [Installation & Setup](#-installation--setup)
+- [Technologies Used](#-technologies-used)
+- [Contribution](#-contribution)
 
 ---
 
