@@ -9,3 +9,5 @@ new_person2 : Person = {"name" : "tanish"}
 
 print(new_person)
 print(new_person2)
+
+# TypeDict does not do data validation, so if you don't give exact data type there is no problem
