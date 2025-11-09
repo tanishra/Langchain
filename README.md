@@ -147,7 +147,7 @@ Structured output ensures that responses from models can be programmatically par
 
   ---
 
-  ### 🧮 Output Parsers
+### 🧮 Output Parsers
 
 Learned about **Output Parsers** in LangChain, which help transform LLM text responses into structured formats for further processing.
 
@@ -228,9 +228,9 @@ Contributions are always welcome! 🙌 If you would like to improve this reposit
 3. **Commit your changes:**
   ```bash
     git commit -m "Add detailed explanation for retrievers module"
-    ```
+  ```
 4. **Push to your fork:**
   ```bash
     git push origin feature-name
-    ```
+  ```
 5. **Open a Pull Request** — describe what you’ve done and why it improves the repo
