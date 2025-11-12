@@ -13,6 +13,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [🗣️ Prompts Component](#-prompts-component)
   - [📦 Structured Output](#-structured-output)
   - [🧮 Output Parsers](#-output-parsers)
+  - [🔗 Chains Component](#-chains-component)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -178,7 +179,8 @@ print(result)
 --- 
 
 
-## ⚙️ Installation & Setup 1. **Clone this repository:**
+## ⚙️ Installation & Setup 
+1. **Clone this repository:**
   ```bash
    git clone https://github.com/tanishra/Langchain.git
    cd Langchain
@@ -200,6 +202,89 @@ print(result)
   ANTHROPIC_API_KEY=your_anthropic_api_key_here
   GOOGLE_API_KEY=your_google_api_key_here
   ````
+---
+
+### 🔗 Chains Component
+
+Today, I learned and implemented **Chains** in LangChain. Chains are powerful abstractions that connect multiple components — **models, prompts, parsers, and logic** — into a **pipeline** for more complex workflows.
+
+---
+
+#### ⚙️ Types of Chains Explored
+
+##### 1️⃣ **Simple Chains**
+A basic combination of a **prompt** and a **model**.  
+Input flows directly into the prompt, which then sends formatted input to the model.
+
+**Example:**
+```python
+from langchain import PromptTemplate, LLMChain
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(model="gpt-4-turbo")
+prompt = PromptTemplate.from_template("What is a good name for a company that makes {product}?")
+
+chain = LLMChain(llm=llm, prompt=prompt)
+response = chain.invoke({"product": "AI-powered drones"})
+print(response)
+```
+
+#### 2️⃣ **Sequential Chains**
+Execute multiple chains in sequence, where the output of one chain becomes the input to the next.
+
+**Example:**
+```python
+from langchain.chains import SimpleSequentialChain
+
+chain1 = LLMChain(llm=llm, prompt=PromptTemplate.from_template("Generate a company name for {product}"))
+chain2 = LLMChain(llm=llm, prompt=PromptTemplate.from_template("Write a tagline for {company_name}"))
+
+overall_chain = SimpleSequentialChain(chains=[chain1, chain2])
+result = overall_chain.invoke({"product": "AI chatbots"})
+print(result)
+```
+
+#### 3️⃣ Parallel Chains
+Run multiple chains simultaneously on the same input and gather all outputs together.
+Useful for generating multiple perspectives or information types from a single input.
+
+**Example:**
+```python
+from langchain.chains import RunnableParallel
+
+chain = RunnableParallel(
+    summary=LLMChain(llm=llm, prompt=PromptTemplate.from_template("Summarize: {text}")),
+    sentiment=LLMChain(llm=llm, prompt=PromptTemplate.from_template("What is the sentiment of this text: {text}?"))
+)
+
+result = chain.invoke({"text": "LangChain makes building with LLMs super efficient!"})
+print(result)
+```
+
+#### 4️⃣ Conditional Chains
+Choose which chain to execute based on input conditions.
+Enables dynamic logic flow in your pipelines.
+
+**Example**
+```python
+from langchain.chains import RunnableBranch, RunnableLambda
+
+branch = RunnableBranch(
+    (lambda x: "weather" in x["query"].lower(),
+     LLMChain(llm=llm, prompt=PromptTemplate.from_template("Provide weather info for {query}"))),
+    (lambda x: True,
+     LLMChain(llm=llm, prompt=PromptTemplate.from_template("Answer the query: {query}")))
+)
+
+result = branch.invoke({"query": "What’s the weather like in Paris?"})
+print(result)
+```
+
+#### 🧠 Key Learnings
+- How to compose multiple LLM components into reusable pipelines.
+- Differences between Sequential, Parallel, and Conditional logic.
+- How to control data flow between chains using LangChain’s Runnable interfaces.
+- How to design multi-step workflows with structured input and output.
 
 ---
 
