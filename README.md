@@ -218,15 +218,28 @@ Input flows directly into the prompt, which then sends formatted input to the mo
 
 **Example:**
 ```python
-from langchain import PromptTemplate, LLMChain
+from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
 
+# Create the prompt template
+prompt = PromptTemplate.from_template(
+    "What is a good name for a company that makes {product}?"
+)
+
+# Instantiate the chat LLM
 llm = ChatOpenAI(model="gpt-4-turbo")
-prompt = PromptTemplate.from_template("What is a good name for a company that makes {product}?")
 
-chain = LLMChain(llm=llm, prompt=prompt)
+# Initialize Parser
+parser = StrOutputParser()
+
+# Compose the chain using the ‘pipe’ style
+chain = prompt | llm | parser
+
+# Invoke the chain
 response = chain.invoke({"product": "AI-powered drones"})
 print(response)
+
 ```
 
 #### 2️⃣ **Sequential Chains**
@@ -234,14 +247,34 @@ Execute multiple chains in sequence, where the output of one chain becomes the i
 
 **Example:**
 ```python
-from langchain.chains import SimpleSequentialChain
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
 
-chain1 = LLMChain(llm=llm, prompt=PromptTemplate.from_template("Generate a company name for {product}"))
-chain2 = LLMChain(llm=llm, prompt=PromptTemplate.from_template("Write a tagline for {company_name}"))
+# Initialize the model
+llm = ChatOpenAI(model="gpt-4-turbo")
 
-overall_chain = SimpleSequentialChain(chains=[chain1, chain2])
+# Define prompts
+prompt1 = PromptTemplate.from_template("Generate a company name for {product}")
+prompt2 = PromptTemplate.from_template("Write a tagline for {company_name}")
+
+# Define output parser
+parser = StrOutputParser()
+
+# Create first chain: product -> company_name
+chain1 = prompt1 | llm | parser
+
+# Create second chain: company_name -> tagline
+chain2 = prompt2 | llm | parser
+
+# Combine chains sequentially
+overall_chain = chain1 | chain2
+
+# Run the pipeline
 result = overall_chain.invoke({"product": "AI chatbots"})
+
 print(result)
+
 ```
 
 #### 3️⃣ Parallel Chains
@@ -250,15 +283,35 @@ Useful for generating multiple perspectives or information types from a single i
 
 **Example:**
 ```python
-from langchain.chains import RunnableParallel
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableParallel
 
+# Initialize the model
+llm = ChatOpenAI(model="gpt-4-turbo")
+
+# Define prompts
+summary_prompt = PromptTemplate.from_template("Summarize: {text}")
+sentiment_prompt = PromptTemplate.from_template("What is the sentiment of this text: {text}?")
+
+# Output parser
+parser = StrOutputParser()
+
+# Define parallel branches
+summary_chain = summary_prompt | llm | parser
+sentiment_chain = sentiment_prompt | llm | parser
+
+# Run both in parallel
 chain = RunnableParallel(
-    summary=LLMChain(llm=llm, prompt=PromptTemplate.from_template("Summarize: {text}")),
-    sentiment=LLMChain(llm=llm, prompt=PromptTemplate.from_template("What is the sentiment of this text: {text}?"))
+    summary=summary_chain,
+    sentiment=sentiment_chain
 )
 
+# Invoke
 result = chain.invoke({"text": "LangChain makes building with LLMs super efficient!"})
 print(result)
+
 ```
 
 #### 4️⃣ Conditional Chains
@@ -267,17 +320,40 @@ Enables dynamic logic flow in your pipelines.
 
 **Example**
 ```python
-from langchain.chains import RunnableBranch, RunnableLambda
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableBranch
 
-branch = RunnableBranch(
-    (lambda x: "weather" in x["query"].lower(),
-     LLMChain(llm=llm, prompt=PromptTemplate.from_template("Provide weather info for {query}"))),
-    (lambda x: True,
-     LLMChain(llm=llm, prompt=PromptTemplate.from_template("Answer the query: {query}")))
+# Initialize the model
+llm = ChatOpenAI(model="gpt-4-turbo")
+
+# Output parser
+parser = StrOutputParser()
+
+# Define the two branches
+weather_chain = (
+    PromptTemplate.from_template("Provide weather info for {query}") |
+    llm |
+    parser
 )
 
+general_chain = (
+    PromptTemplate.from_template("Answer the query: {query}") |
+    llm |
+    parser
+)
+
+# Define branching logic
+branch = RunnableBranch(
+    (lambda x: "weather" in x["query"].lower(), weather_chain),
+    (lambda x: True, general_chain)  # fallback branch (like "else")
+)
+
+# Invoke the chain
 result = branch.invoke({"query": "What’s the weather like in Paris?"})
 print(result)
+
 ```
 
 #### 🧠 Key Learnings
