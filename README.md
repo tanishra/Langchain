@@ -14,6 +14,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [📦 Structured Output](#-structured-output)
   - [🧮 Output Parsers](#-output-parsers)
   - [🔗 Chains Component](#-chains-component)
+  - [⚡️ Runnables Component](#-runnable-component)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -206,7 +207,7 @@ print(result)
 
 ### 🔗 Chains Component
 
-Today, I learned and implemented **Chains** in LangChain. Chains are powerful abstractions that connect multiple components — **models, prompts, parsers, and logic** — into a **pipeline** for more complex workflows.
+Chains are powerful abstractions that connect multiple components — **models, prompts, parsers, and logic** — into a **pipeline** for more complex workflows.
 
 ---
 
@@ -364,6 +365,150 @@ print(result)
 
 ---
 
+### ⚡️ Runnables Componenet
+Runnables define how data flows through pipelines and give extremely fine-grained control over execution.
+
+Runnables are executable components that take an input → process it → return output.
+
+They can represent:
+- Models
+- Prompts
+- Parsers
+- Functions
+- Conditional logic
+- Parallel pipelines
+- Entire workflows
+
+#### Why Runnables?
+Before runnables, LangChain relied on rigid chain classes.
+
+Runnables solve key limitations by offering:
+
+- High modularity
+- Flexible composition
+- Support for parallel & conditional execution
+- Ability to add custom Python functions
+- Unified interface across LLMs, embeddings, retrievers, tools, prompts
+
+#### How Runnables Work
+Every runnable supports these methods:
+
+- .invoke(input) → run synchronously
+- .ainvoke(input) → async
+- .batch(inputs) → multiple inputs
+- .stream(input) → output streaming
+- | (pipe operator) → compose components like Unix pipelines
+
+#### 🧱 Runnable Primitives Explored
+
+#### 1️⃣ RunnableSequence
+A sequence of steps executed one after another.
+Output of step A becomes input to step B.
+
+```python
+from langchain_core.runnables import RunnableSequence, RunnableLambda
+
+pipeline = RunnableSequence(
+    steps=[
+        RunnableLambda(lambda x: x * 2),
+        RunnableLambda(lambda x: x + 10)
+    ]
+)
+
+print(pipeline.invoke(5))  # Output: 20
+```
+#### 2️⃣ RunnableParallel
+Runs multiple tasks simultaneously on the same input.
+
+```python
+from langchain_core.runnables import RunnableParallel, RunnableLambda
+
+parallel_ops = RunnableParallel(
+    square=RunnableLambda(lambda x: x ** 2),
+    cube=RunnableLambda(lambda x: x ** 3),
+)
+
+print(parallel_ops.invoke(4))
+```
+
+#### 3️⃣ RunnableLambda
+Wraps a simple Python function as a runnable.
+
+Great for custom logic, preprocessing, filtering, and data transformations.
+
+```python
+from langchain_core.runnables import RunnableLambda
+
+double = RunnableLambda(lambda x: x * 2)
+print(double.invoke(7))  # Output: 14
+```
+
+#### 4️⃣ RunnablePassThrough
+Passes the input unchanged but allows multiple runnable branches to process it.
+
+```python
+from langchain_core.runnables import RunnableParallel, RunnablePassThrough
+from langchain_core.runnables import RunnableLambda
+
+pipeline = (
+    RunnablePassThrough()
+    | RunnableParallel(
+        original=RunnableLambda(lambda x: x),
+        doubled=RunnableLambda(lambda x: x * 2),
+    )
+)
+
+print(pipeline.invoke(5))
+```
+
+#### 5️⃣ RunnableBranch
+Implements conditional logic — similar to if / elif / else.
+
+```python
+from langchain_core.runnables import RunnableBranch, RunnableLambda
+
+branch = RunnableBranch(
+    (lambda x: x > 50, RunnableLambda(lambda x: "High value")),
+    (lambda x: x > 20, RunnableLambda(lambda x: "Medium value")),
+    (lambda x: True, RunnableLambda(lambda x: "Low value"))
+)
+
+print(branch.invoke(30))
+
+```
+##### 6️⃣ Task-Specific Runnables
+These wrap core LangChain modules as runnables:
+- RunnablePrompt
+- RunnableLLM
+- RunnableEmbeddings
+- RunnableRetriever
+- RunnableTool
+
+This makes ANY LangChain component plug-and-play inside runnable pipelines.
+
+#### **Example – Prompt → LLM → Parser**
+```python
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_openai import ChatOpenAI
+
+prompt = PromptTemplate.from_template("Explain {topic} in simple words.")
+llm = ChatOpenAI(model="gpt-4o-mini")
+parser = StrOutputParser()
+
+pipeline = prompt | llm | parser
+
+print(pipeline.invoke({"topic": "quantum mechanics"}))
+```
+
+##### 🎯 Key Learnings
+- Runnables power the entire execution engine of LangChain.
+- You can build complex pipelines using sequence, parallel, and conditional logic.
+- RunnableLambda allows inserting custom Python logic anywhere in the flow.
+- RunnableParallel helps run multiple tasks at once.
+- RunnableBranch enables dynamic decision-making inside workflows.
+- All LLM components (models, retrievers, tools, prompts) convert into reusable runnables.
+- Runnables = the most powerful and flexible abstraction in LangChain.
 
 ## 🧰 Technologies Used 
 - **Python 3.11** 
