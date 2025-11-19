@@ -15,6 +15,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [🧮 Output Parsers](#-output-parsers)
   - [🔗 Chains Component](#-chains-component)
   - [⚡️ Runnables Component](#-runnable-component)
+  - [📄 Document Loaders](#-document-loaders)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -509,6 +510,118 @@ print(pipeline.invoke({"topic": "quantum mechanics"}))
 - RunnableBranch enables dynamic decision-making inside workflows.
 - All LLM components (models, retrievers, tools, prompts) convert into reusable runnables.
 - Runnables = the most powerful and flexible abstraction in LangChain.
+
+### 📄 Document Loaders
+Document Loaders are the entry point of any retrieval or RAG pipeline.
+
+They help you load data from various sources—files, web pages, APIs, cloud storage, or entire directories—into a structured Document format that LangChain understands.
+
+Document Loaders allow you to quickly ingest raw text, PDFs, CSV files, websites, and more so they can be processed, chunked, embedded, and searched.
+
+#### Why Document Loaders?
+LangChain provides a unified interface for loading data from many formats.
+
+Key advantages:
+- Consistent Document structure regardless of source
+- Automatic handling of metadata
+- Ability to process large datasets
+- Easily combine multiple loaders for multi-source ingestion
+- Supports local + remote sources (files, URLs, APIs, GitHub repos, etc.)
+
+Document loaders are essential for Semantic Search, RAG, Chat-with-your-data, and AI agents that rely on external information.
+
+#### Types of Document Loaders
+
+#### 1️⃣ Text Loader
+Loads simple .txt files.
+
+```python
+from langchain_community.document_loaders import TextLoader
+
+loader = TextLoader("sample.txt")
+docs = loader.load()
+
+print(docs)
+```
+
+#### 2️⃣ PDF Loader
+PDFs often contain multi-column text, images, and complex layouts.
+
+LangChain provides robust PDF loaders like PyPDFLoader.
+
+```python
+from langchain_community.document_loaders import PyPDFLoader
+
+loader = PyPDFLoader("document.pdf")
+docs = loader.load()
+
+print(docs[0].page_content[:500])
+```
+
+#### 3️⃣ CSV Loader
+Loads CSV files row-by-row as separate documents.
+
+```python
+from langchain_community.document_loaders import CSVLoader
+
+loader = CSVLoader(file_path="data.csv")
+docs = loader.load()
+
+print(docs[0])
+```
+
+#### 4️⃣ Web-Based Loader
+Loads HTML content from a URL using WebBaseLoader.
+
+```python
+from langchain_community.document_loaders import WebBaseLoader
+
+loader = WebBaseLoader("https://example.com")
+docs = loader.load()
+
+print(docs[0].page_content[:300])
+```
+
+#### 5️⃣ Directory Loader
+Loads all files in a folder, while automatically selecting appropriate loaders based on file extensions.
+
+```python
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+
+loader = DirectoryLoader(
+    "my_docs/",
+    glob="**/*.txt",
+    loader_cls=TextLoader
+)
+
+docs = loader.load()
+print(len(docs))
+```
+
+#### 🧠 How Document Loaders Work
+Each loader outputs a list of Document objects:
+
+```python
+{
+  "page_content": "...actual text...",
+  "metadata": {
+      "source": "filename",
+      "page": 1,
+      ...
+  }
+}
+```
+
+This uniform structure allows:
+- Chunking
+- Embedding
+- Semantic search
+- Vector storage
+- Query understanding
+
+No matter what the original file format was.
+
+---
 
 ## 🧰 Technologies Used 
 - **Python 3.11** 
