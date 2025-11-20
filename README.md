@@ -18,6 +18,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [📄 Document Loaders](#-document-loaders)
   - [✂️ Text Splitters](#-text-splitters)
   - [🧮 Vector Store](#-vector-store)
+  - [🔍 Retrievers](#-retrievers)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -843,6 +844,55 @@ LangChain supports integration with several popular vector stores, each offering
 - **Scalability**: Many vector stores (like Pinecone and Weaviate) are designed to scale seamlessly, handling millions or even billions of vectors.
 - **Integration with LangChain Pipelines**: Vector stores integrate easily with LangChain’s pipelines, enabling complex workflows like Retrieval-augmented Generation (RAG), semantic search, and document classification.
 - **Support for Various Embeddings**: LangChain’s vector stores can store and query embeddings from various models, including OpenAI, Hugging Face, or custom models.
+
+---
+
+### 🔍 Retrievers
+
+Retrievers in LangChain are used to fetch relevant documents or information from a knowledge base or a vector store. They work by querying the data (e.g., vector stores, documents, or external APIs) and retrieving the most relevant pieces of information based on a user's query. The retrieved information is typically then passed to a model or another component for further processing, such as in Retrieval-Augmented Generation (RAG).
+
+Retrievers are crucial in enabling applications that involve semantic search, question-answering, or any task where context from an external knowledge base is required. LangChain supports various types of retrievers, each designed for specific use cases and data sources.
+
+#### Types of Retrievers
+
+LangChain offers a variety of retrievers, each suited for different data sources and retrieval needs. Below are some of the most common types of retrievers available:
+
+1️⃣ **Wikipedia Retriever**  
+   - **Description**: The Wikipedia Retriever is designed to fetch relevant documents or information directly from Wikipedia. It can query the Wikipedia API to retrieve articles based on a given query, making it useful for answering general knowledge questions.
+   - **Use Case**: Ideal for applications that require general knowledge and facts from Wikipedia.
+
+2️⃣ **Vector Store Retriever**  
+   - **Description**: A Vector Store Retriever performs similarity search on a vector store (e.g., FAISS, Pinecone, Chroma). It retrieves the most relevant documents or vectors from a vector store by comparing the similarity of the query vector with stored vectors.
+   - **Use Case**: Useful when your data is stored as vector embeddings, and you need to find semantically similar documents based on vector search.
+
+3️⃣ **MMR (Maximum Marginal Relevance) Retriever**  
+   - **Description**: The MMR Retriever aims to find documents that are both relevant to the query and diverse from each other. It selects the top documents based on both relevance and the diversity of the returned results, which helps to reduce redundancy in the results.
+   - **Use Case**: Best for applications where you want diverse yet relevant results, such as when you need to avoid returning similar or repetitive documents.
+
+4️⃣ **Multi-Query Retriever**  
+   - **Description**: The Multi-Query Retriever can perform multiple queries in parallel. It is designed to send multiple queries to the same or different retrievers and aggregate their results. This is useful when you want to query different sources or combine different retrieval techniques.
+   - **Use Case**: Ideal for complex systems where you need to query multiple sources or multiple retrieval strategies simultaneously, such as cross-referencing results or combining information from different retrieval methods.
+
+5️⃣ **Contextual Compression Retriever**  
+   - **Description**: The Contextual Compression Retriever improves retrieval results by compressing and rephrasing the context of a query. It modifies the query in a way that preserves its meaning while potentially improving the retrieval of relevant documents, especially when the original query is vague or ambiguous.
+   - **Use Case**: Useful when working with vague or complex queries where the exact intent might not be clear, and a refined query could improve retrieval accuracy.
+
+#### How Retrievers Work
+
+Each retriever in LangChain operates by executing a query against a data source (such as a vector store, Wikipedia, or multiple retrievers) and returning a list of relevant documents or results. These results are then typically passed to a downstream model or used in a pipeline for tasks like summarization, question-answering, or document ranking.
+
+The retriever typically outputs a list of documents, each containing metadata (such as the source, relevance score, or position in the result set), which can then be processed for downstream tasks.
+
+```python
+{
+  "page_content": "...relevant document content...",
+  "metadata": {
+      "source": "source_name",
+      "score": 0.95,
+      "relevance": "high"
+  }
+}
+```
 
 ---
 
