@@ -16,6 +16,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [🔗 Chains Component](#-chains-component)
   - [⚡️ Runnables Component](#-runnable-component)
   - [📄 Document Loaders](#-document-loaders)
+  - [✂️ Text Splitters](#-text-splitters)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -620,6 +621,170 @@ This uniform structure allows:
 - Query understanding
 
 No matter what the original file format was.
+
+---
+
+### ✂️ Text Splitter
+Text Splitters in LangChain are used to divide a document or text into smaller, more manageable chunks. These chunks can be processed individually for a variety of purposes, such as indexing, embedding, or semantic search. Text splitting is particularly useful when working with large documents that need to be broken down into smaller sections before being processed by models or passed to other components in the pipeline.
+
+LangChain provides several types of text splitters, each designed to split documents based on different criteria, such as length, structure, or semantic meaning. These splitters help ensure that the chunks are meaningful and usable for downstream tasks like semantic search or question-answering.
+
+#### Why Use Text Splitters?
+
+- **Handling Large Texts**: Split long documents into smaller pieces for more efficient processing.
+- **Optimizing Search**: Create smaller chunks for better relevance in semantic search.
+- **Data Preprocessing**: Prepare text for embeddings by splitting into manageable units.
+
+#### Types of Text Splitters
+
+LangChain provides the following text splitters:
+
+1️⃣ **Length-Based Splitter**  
+This splitter divides the text into chunks based on a specified length. It is useful for ensuring that chunks are a manageable size for embedding or processing.
+
+```python
+from langchain_text_splitters import CharacterTextSplitter
+
+# Split text into chunks of 1000 characters
+splitter = CharacterTextSplitter(
+    chunk_size=100,
+    chunk_overlap=0,
+    separator=''
+)
+docs = splitter.split_text("Your very long document goes here.")
+
+print(docs)
+```
+
+2️⃣ Structure-Based Splitter
+This splitter divides the text based on predefined structure or delimiters, such as paragraphs, sentences, or specific tags. It helps in ensuring that chunks align with logical breaks in the text.
+
+```python
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+# Split text by paragraphs
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=100,
+    chunk_overlap=30
+)
+docs = splitter.split_text("Your text with multiple paragraphs goes here.")
+
+print(docs)
+```
+
+3️⃣ Document-Structure-Based Splitter
+This splitter uses the structure of the document (e.g., sections, headers) to break it into chunks. It is ideal for documents that follow a clear structure, such as reports, guides, or books.
+
+```python
+from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
+
+text = """
+class Student:
+    def __init__(self, name, age, grade):
+        self.name = name
+        self.age = age
+        self.grade = grade  # Grade is a float (like 8.5 or 9.2)
+
+    def get_details(self):
+        return self.name"
+
+    def is_passing(self):
+        return self.grade >= 6.0
+
+
+# Example usage
+student1 = Student("Aarav", 20, 8.2)
+print(student1.get_details())
+
+if student1.is_passing():
+    print("The student is passing.")
+else:
+    print("The student is not passing.")
+
+"""
+
+splitter = RecursiveCharacterTextSplitter.from_language(
+    language=Language.PYTHON,
+    chunk_size=300,
+    chunk_overlap=0
+)
+
+docs = splitter.split_text(text)
+
+print(docs)
+```
+
+4️⃣ Markdown-Based Splitter
+If your documents are in Markdown format, this splitter will break the text based on Markdown headings. It can be useful for processing Markdown files where sections are clearly defined by # tags.
+
+```python
+from langchain_text_splitters import RecursiveCharacterTextSplitter,Language
+
+text = """
+# Project Name: Smart Student Tracker
+
+A simple Python-based project to manage and track student data, including their grades, age, and academic status.
+
+
+## Features
+
+- Add new students with relevant info
+- View student details
+- Check if a student is passing
+- Easily extendable class-based design
+
+
+## 🛠 Tech Stack
+
+- Python 3.10+
+- No external dependencies
+
+
+## Getting Started
+
+1. Clone the repo  
+   ```bash
+   git clone https://github.com/your-username/student-tracker.git
+
+"""
+
+splitter = RecursiveCharacterTextSplitter.from_language(
+    language=Language.MARKDOWN,
+    chunk_size=200,
+    chunk_overlap=0,
+)
+
+docs = splitter.split_text(text)
+
+print(docs)
+```
+
+5️⃣ Semantic Meaning-Based Splitter
+This splitter divides the text based on its semantic content rather than just structure or length. It uses models to identify meaningful sections of the text that are semantically relevant. This is ideal for more advanced use cases like summarization or extracting key concepts from long documents.
+
+```python
+from langchain_experimental.text_splitter import SemanticChunker
+from langchain_openai.embeddings import OpenAIEmbeddings
+from dotenv import load_dotenv
+
+load_dotenv()
+
+text_splitter = SemanticChunker(
+    OpenAIEmbeddings(), breakpoint_threshold_type="standard_deviation",
+    breakpoint_threshold_amount=1
+)
+
+sample = """
+Farmers were working hard in the fields, preparing the soil and planting seeds for the next season. The sun was bright, and the air smelled of earth and fresh grass. The Indian Premier League (IPL) is the biggest cricket league in the world. People all over the world watch the matches and cheer for their favourite teams.
+
+
+Terrorism is a big danger to peace and safety. It causes harm to people and creates fear in cities and villages. When such attacks happen, they leave behind pain and sadness. To fight terrorism, we need strong laws, alert security forces, and support from people who care about peace and safety.
+"""
+
+docs = text_splitter.create_documents([sample])
+
+print(docs)
+```
 
 ---
 
