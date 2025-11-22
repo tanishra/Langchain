@@ -19,6 +19,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [✂️ Text Splitters](#-text-splitters)
   - [🧮 Vector Store](#-vector-store)
   - [🔍 Retrievers](#-retrievers)
+  - [🧠 Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -893,6 +894,119 @@ The retriever typically outputs a list of documents, each containing metadata (s
   }
 }
 ```
+
+### 🧠 Retrieval Augmented Generation (RAG)
+
+#### What is RAG?
+
+**Retrieval Augmented Generation (RAG)** is an architecture where a Large Language Model (LLM) is combined with an external knowledge source (usually a vector database).  
+Instead of relying only on the LLM’s internal knowledge, RAG retrieves relevant contextual information from documents and feeds it to the model at query time.
+
+RAG = **Retriever + LLM**
+
+This allows the LLM to generate answers grounded in **real, external, updated information**.
+
+#### Why is RAG Used?
+
+RAG solves several real-world problems:
+
+1. **Overcomes LLM Knowledge Cutoff** -   LLMs cannot know everything after their last training date.RAG gives them **live**, **custom**, and **domain-specific** knowledge.
+
+2. **Reduces Hallucinations** - Since the LLM answers only from retrieved context, responses become more accurate and explainable.
+
+3. **Personal & Private Data Usage** You can use:
+    - private company documents  
+    - internal knowledge bases  
+    - proprietary research  without ever training or fine-tuning an LLM.
+
+4. **Scalable & Flexible** - You can update the vector database anytime with new documents, and the LLM will immediately use them.
+
+
+#### Detailed Steps Involved in RAG
+
+RAG generally follows this pipeline:
+
+
+#### **1. Document Loading**
+Raw documents (PDFs, text files, transcripts, URLs, YouTube content, etc.) are loaded using:
+- LangChain Loaders  
+- Custom scrapers  
+- APIs  
+
+Example:  
+Loading YouTube transcript → storing text.
+
+
+#### **2. Text Splitting**
+Documents are often too large for embeddings.  
+They are chunked into smaller segments using something like:
+
+- `RecursiveCharacterTextSplitter`
+- `TokenTextSplitter`
+
+This ensures:
+- better retrieval accuracy  
+- manageable embedding cost  
+- coherent context windows  
+
+
+#### **3. Embedding Generation**
+Each chunk is converted into a vector using an embedding model such as:
+
+- `text-embedding-3-small`
+- `text-embedding-3-large`
+
+These embeddings represent semantic meaning.
+
+
+#### **4. Vector Store Storage**
+Chunks + embeddings are stored in a vector database, such as:
+
+- **FAISS**
+- ChromaDB
+- Pinecone
+
+This enables fast similarity search.
+
+
+#### **5. Retrieval**
+At query time, the user question is embedded.  
+The vector store retrieves the most relevant documents using similarity search.
+
+Example techniques:
+- `k-NN search`
+- Cosine similarity
+- Dot-product search
+
+
+#### **6. Prompt Construction**
+The retrieved documents are inserted into a structured prompt template:
+```python
+"""You are a helpful assistant.
+Answer only from the provided context.
+If the context is insufficient, say "I don't know".
+Context:
+{context}
+Question:
+{query}"""
+```
+This constrains the model to grounded knowledge.
+
+#### **7. LLM Generation**
+The prompt is passed into an LLM such as:
+- `gpt-4o`
+- `gpt-4.1`
+- `gpt-4-turbo`
+
+The model uses the retrieved context to generate an accurate, grounded answer.
+
+
+#### **8. Answer Returned to User**
+The final answer is context-enriched, fact-based, and non-hallucinated.
+
+
+RAG makes LLMs smarter, grounded, and capable of using **your own data** reliably.
+
 
 ---
 
