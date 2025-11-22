@@ -1,10 +1,11 @@
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from urllib.parse import urlparse, parse_qs
+
 
 def extract_video_id(url: str) -> str:
     """
     Extracts the YouTube video ID from any valid YouTube URL.
-    Supports formats:
+    Supports:
       - https://www.youtube.com/watch?v=xxxx
       - https://youtu.be/xxxx
       - https://www.youtube.com/embed/xxxx
@@ -27,21 +28,26 @@ def extract_video_id(url: str) -> str:
 
     raise ValueError("Invalid YouTube URL or cannot extract video ID")
 
-url = "https://www.youtube.com/watch?v=pPRoAs8xh2o"  
 
-try:
-    video_id = extract_video_id(url)
-    print("Extracted video ID:", video_id)
+def get_youtube_transcript(url: str) -> str:
+    """
+    Given a YouTube URL, returns its English transcript as a single string.
+    Raises helpful errors if the transcript is unavailable.
+    """
+    try:
+        video_id = extract_video_id(url)
 
-    api = YouTubeTranscriptApi()
-    transcript_list = api.fetch(video_id=video_id, languages=['en'])
+        api = YouTubeTranscriptApi()
+        transcript_list = api.fetch(video_id=video_id,languages=['en'])
 
-    transcript = " ".join(chunk.text for chunk in transcript_list)
+        # Join all text into one string
+        transcript = " ".join(chunk["text"] for chunk in transcript_list)
 
-    print("\nTRANSCRIPT:\n")
-    print(transcript)
+        return transcript
 
-except TranscriptsDisabled:
-    print("No captions available for this video")
-except Exception as e:
-    print("Error:", e)
+    except TranscriptsDisabled:
+        raise RuntimeError("Transcripts are disabled for this video.")
+    except NoTranscriptFound:
+        raise RuntimeError("No English transcript found for this video.")
+    except Exception as e:
+        raise RuntimeError(f"Error retrieving transcript: {e}")
