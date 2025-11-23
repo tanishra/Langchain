@@ -21,6 +21,9 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [🔍 Retrievers](#-retrievers)
   - [🧠 Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)
   - [🛠️ Tools Component](#tool-component)
+  - [🔧 Tool Calling](#tool-calling)
+  - [🔗 Tool Binding](#tool-binding)
+  - [⚙️ Tool Execution](#tool-execution)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -1149,6 +1152,78 @@ A **Toolkit** is a pre-built collection of tools designed for a specific domain.
 - Ready-made bundles  
 - Reduce setup time  
 - Build powerful agents quickly  
+
+
+#### 🔧 Tool Calling in LangChain
+
+Tool Calling is a powerful mechanism that enables language models to **decide when to use a tool**, **generate the correct tool inputs**, and **execute the tool** to solve a task.  
+This makes LLMs more reliable, more accurate, and capable of performing real-world actions.
+
+---
+
+#### 🧠 What Is Tool Calling?
+
+**Tool Calling** refers to the process where the language model **predicts a structured function call** instead of a plain text response.
+
+The model decides:
+
+- **Whether** a tool is needed  
+- **Which tool** to call  
+- **What arguments** to pass to the tool  
+
+Modern LLMs like OpenAI, Anthropic, and Mistral support tool calling natively, and LangChain provides a unified interface to work with them.
+
+#### Example of a tool call predicted by an LLM:
+
+```json
+{
+  "tool": "multiply",
+  "arguments": {
+    "a": 5,
+    "b": 4
+  }
+}
+```
+
+The model has understood the task and responded with a structured instruction that LangChain can execute.
+
+#### 🔗 What Is Tool Binding?
+Tool Binding is the process of attaching tools to a language model so that the model is aware of:
+- the tool’s name
+- the tool’s description
+- the tool’s input schema
+- how the tool can be used
+
+Once tools are bound, the model can intelligently decide when to call them.
+
+```python
+bound_llm = llm.bind_tools([multiply_tool, search_tool])
+```
+
+This step tells the model:
+
+“These are the tools you are allowed to call. Use them when needed.”
+
+Tool binding is essential for agents and workflows that rely on controlled tool execution.
+
+#### ⚙️ What Is Tool Execution?
+Once the model predicts a tool call (during tool calling), LangChain handles tool execution.
+
+Tool Execution Includes:
+- Parsing the tool call predicted by the model
+- Validating the arguments based on the tool’s schema
+- Running the underlying Python function / API request
+- Returning the output back to the model (if needed) 
+
+#### 🔄 How Tool Calling, Binding, and Execution Work Together
+
+| Step            | Purpose                         | Example                     |
+|-----------------|----------------------------------|-----------------------------|
+| **Tool Binding**   | Tell the model what tools exist | `llm.bind_tools([...])`      |
+| **Tool Calling**   | Model decides to call a tool    | LLM outputs a structured tool call |
+| **Tool Execution** | LangChain runs the tool         | Python function executes and returns a result |
+
+This pipeline is the foundation of **agents**, **function calling**, and **autonomous workflows** in LangChain.
 
 ---
 
