@@ -20,6 +20,7 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [🧮 Vector Store](#-vector-store)
   - [🔍 Retrievers](#-retrievers)
   - [🧠 Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)
+  - [🛠️ Tools Component](#tool-component)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -1007,6 +1008,147 @@ The final answer is context-enriched, fact-based, and non-hallucinated.
 
 RAG makes LLMs smarter, grounded, and capable of using **your own data** reliably.
 
+
+### 🛠️ Tools Component
+LangChain **Tools** allow language models to interact with external systems by executing functions, APIs, database queries, code, and more.  
+They bridge the gap between **natural language** and **actions**, enabling agents to perform meaningful tasks in the real world.
+
+
+#### 🔍 What Are Tools in LangChain?
+
+Tools are **functions wrapped with metadata** (name, description, schema) that help LLMs understand:
+
+- *When* to use the tool  
+- *How* to use the tool  
+- *What input* it expects  
+- *What output* it produces  
+
+Tools allow LLMs to:  
+- Make calculations  
+- Query APIs  
+- Search documents  
+- Access databases  
+- Run code  
+- Trigger workflows  
+- And more...
+
+
+#### 🧰 Why Are Tools Important?
+
+LLMs operate on text only.  
+Tools give them **capabilities beyond text**, enabling:
+
+- **Enhanced reasoning**  
+- **Improved accuracy** (e.g., math, retrieval)  
+- **Autonomous agents**  
+- **Function calling** like OpenAI/Anthropic models  
+- **Actionable workflows**  
+
+Tools are the backbone of **agents**, **function calling**, and **complex pipelines**.
+
+#### 🛠️ Creating Tools in LangChain
+
+LangChain provides multiple ways to define tools.  
+Below are the most common and most powerful methods.
+
+
+#### 1. 🏷️ Creating Tools Using the `@tool` Decorator
+
+This is the simplest way to create a tool.
+
+```python
+from langchain_core.tools import tool
+
+@tool
+def add(a: int, b: int) -> int:
+    """Adds two numbers."""
+    return a + b
+```
+
+##### ✔ Features
+- Auto-generates metadata
+- Automatically infers schema from type hints
+- Very convenient for quick utilities
+
+#### 2. 🧱 Creating Tools Using StructuredTool
+This method is used when your tool needs:
+- Strong input validation
+- Pydantic schemas
+- Clear argument structures
+- Detailed documentation for LLMs
+
+```python
+from langchain_core.tools import StructuredTool
+from pydantic import BaseModel, Field
+
+class MultiplyInput(BaseModel):
+    a: int = Field(..., description="First number")
+    b: int = Field(..., description="Second number")
+
+def multiply(a: int, b: int) -> int:
+    return a * b
+
+multiply_tool = StructuredTool.from_function(
+    func=multiply,
+    name="multiply",
+    description="Multiply two numbers",
+    args_schema=MultiplyInput
+)
+```
+
+##### ✔ Why use StructuredTool?
+- Strict control over inputs
+- Better error handling
+- Compatible with complex applications
+- Recommended for production-grade tools
+
+#### 3. ⚙️ Creating Custom Tools Using BaseTool
+Use this when you need full control over:
+- Custom logic
+- Validation
+- Setup/teardown
+- Async behavior
+
+```python
+from langchain_core.tools import BaseTool
+
+class PowerTool(BaseTool):
+    name = "power"
+    description = "Raises a number to a power."
+
+    def _run(self, base: int, exponent: int):
+        return base ** exponent
+
+    async def _arun(self, base: int, exponent: int):
+        return base ** exponent
+```
+
+##### ✔ When to use BaseTool?
+- Custom behavior
+- Tools requiring initialization
+- Complex async tools
+- Wrapper over external services
+
+#### 🧰 Toolkits in LangChain
+
+A **Toolkit** is a pre-built collection of tools designed for a specific domain.
+
+#### Examples include:
+
+| Toolkit | Purpose |
+|--------|----------|
+| **SQL Toolkit** | Query SQL databases with tools like `QuerySQLDataBaseTool` |
+| **Browser Toolkit** | Tools for web navigation and scraping |
+| **File Toolkit** | Read/write local file content |
+| **VectorStore Toolkit** | Search and retrieve from vector DBs |
+
+---
+
+##### **Why Toolkits?**
+
+- Ready-made bundles  
+- Reduce setup time  
+- Build powerful agents quickly  
 
 ---
 
