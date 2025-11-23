@@ -20,10 +20,10 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [🧮 Vector Store](#-vector-store)
   - [🔍 Retrievers](#-retrievers)
   - [🧠 Retrieval Augmented Generation (RAG)](#-retrieval-augmented-generation-rag)
-  - [🛠️ Tools Component](#-tool-component)
-  - [🔧 Tool Calling](#-tool-calling)
-  - [🔗 Tool Binding](#-tool-binding)
-  - [⚙️ Tool Execution](#-tool-execution)
+  - [🛠️ Tools Component](#tools-component)
+  - [🔧 Tool Calling](#tool-calling)
+  - [🔗 What is tool binding](#what-is-tool-binding)
+  - [⚙️ What is tool execution](#what-is-tool-execution)
 - [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
@@ -1154,7 +1154,7 @@ A **Toolkit** is a pre-built collection of tools designed for a specific domain.
 - Build powerful agents quickly  
 
 
-#### 🔧 Tool Calling in LangChain
+### 🔧 Tool Calling in LangChain
 
 Tool Calling is a powerful mechanism that enables language models to **decide when to use a tool**, **generate the correct tool inputs**, and **execute the tool** to solve a task.  
 This makes LLMs more reliable, more accurate, and capable of performing real-world actions.
