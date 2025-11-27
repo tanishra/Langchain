@@ -26,7 +26,6 @@ It provides modular components to help developers connect **LLMs, prompts, tools
   - [⚙️ What is tool execution](#what-is-tool-execution)
   - [🤖 AI Agent](#ai-agent)
     - [What is a ReAct Agent?](#what-is-a-react-agent)
-- [Upcoming Topics](#-upcoming-topics)
 - [Installation & Setup](#-installation--setup)
 - [Technologies Used](#-technologies-used)
 - [Contribution](#-contribution)
@@ -40,8 +39,6 @@ It provides modular components to help developers connect **LLMs, prompts, tools
 - Document the journey for **educational and reference** purposes.
 
 ---
-
-## ✅ Current Progress
 
 ### 1️⃣ **Models Component**
 
@@ -189,32 +186,6 @@ print(result)
 ```
 
 --- 
-
-
-## ⚙️ Installation & Setup 
-1. **Clone this repository:**
-  ```bash
-   git clone https://github.com/tanishra/Langchain.git
-   cd Langchain
-   ```
-2. **Create and activate a virtual environment:**
-  ```python
-  python -m venv venv
-  source venv/bin/activate     # For Linux/Mac
-  venv\Scripts\activate
-  ```
-3. **Install dependencies:**
-  ```bash
-  ip install -r requirements.txt
-  ```
-4. **Add your API keys to .env file:**
-  ```bash
-  OPENAI_API_KEY=your_openai_api_key_here
-  HUGGINGFACEHUB_API_TOKEN=your_huggingface_token_here
-  ANTHROPIC_API_KEY=your_anthropic_api_key_here
-  GOOGLE_API_KEY=your_google_api_key_here
-  ````
----
 
 ### 🔗 Chains Component
 
@@ -1263,6 +1234,31 @@ This will:
 
 ---
 
+## ⚙️ Installation & Setup 
+1. **Clone this repository:**
+  ```bash
+   git clone https://github.com/tanishra/Langchain.git
+   cd Langchain
+   ```
+2. **Create and activate a virtual environment:**
+  ```python
+  python -m venv venv
+  source venv/bin/activate     # For Linux/Mac
+  venv\Scripts\activate
+  ```
+3. **Install dependencies:**
+  ```bash
+  pip install -r requirements.txt
+  ```
+4. **Add your API keys to .env file:**
+  ```bash
+  OPENAI_API_KEY=your_openai_api_key_here
+  HUGGINGFACEHUB_API_TOKEN=your_huggingface_token_here
+  ANTHROPIC_API_KEY=your_anthropic_api_key_here
+  GOOGLE_API_KEY=your_google_api_key_here
+  ````
+---
+
 ## 🧰 Technologies Used 
 - **Python 3.11** 
 - **LangChain** 
@@ -1273,8 +1269,7 @@ This will:
 - **Huggingface Token** 
 - **scikit-learn** *(for cosine similarity)*
 
-
-----
+---
 
 
 ## 💡 Contribution 
